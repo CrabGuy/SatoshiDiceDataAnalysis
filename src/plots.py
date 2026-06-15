@@ -50,3 +50,12 @@ def plot_payout_distance_distribution(dataframe):
     ax2.set_title("Bet to Payout Distance Distribution (log scale)")
 
     save_plot_image("payout_distance_distribution")
+
+def plot_time_distribution(series, freq: str) -> None:
+    ax = series.plot(kind='bar', figsize=(12, 4))
+    ax.set_title(f'Transactions per {freq}')
+    ax.set_xlabel('Time')
+    ax.set_ylabel('Count')
+    pyplot.xticks(rotation=45, ha='right')
+    
+    save_plot_image("popular_time_distribution")

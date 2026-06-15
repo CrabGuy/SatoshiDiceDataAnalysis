@@ -1,9 +1,14 @@
-import pandas
 from plots import plot_payout_distance_distribution
+from data_loader import read_parquet
 
-satoshi_payouts = pandas.read_parquet("../data/processed/satoshi_payouts.parquet")
+inputs = read_parquet("inputs")
+transactions = read_parquet("transactions")
+satoshi_bets = read_parquet("satoshi_bets")
 
-# TODO: this is most likely correct but need to correct the merging
-payout_distance = satoshi_payouts["position"] - satoshi_payouts["previous_transaction_position"]
+# TODO: Could probably optimize this further
+satoshi_inputs = inputs[inputs["previous_transaction_id"].isin(satoshi_bets["transaction_id"].unique())]
+inputs_block = satoshi_inputs.merge(transactions)
 
-plot_payout_distance_distribution(payout_distance)
+transaction_connection = inputs_block.merge(satoshi_bets, left_on="previous_transaction_id", right_on="transaction_id")
+
+plot_payout_distance_distribution(transaction_connection["block_id_x"] - transaction_connection["block_id_y"])

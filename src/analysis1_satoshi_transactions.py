@@ -1,8 +1,9 @@
 import pandas
 from plots import plot_absolute_transaction_percentage, plot_relative_transaction_percentage
+from data_loader import read_parquet
 
-transactions_amount = pandas.read_parquet("../data/processed/transactions_amount.parquet")
-satoshi_bets = pandas.read_parquet("../data/processed/satoshi_bets.parquet")
+transactions_amount = read_parquet("transactions_amount")
+satoshi_bets = read_parquet("satoshi_bets")
 
 def resample(dataframe, start):
 	TIME_STEP = "1ME"
