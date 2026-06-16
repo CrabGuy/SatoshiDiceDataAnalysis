@@ -9,6 +9,17 @@ def save_parquet(dataframe: pandas.DataFrame, name):
 def read_parquet(name):
     return pandas.read_parquet(f"../data/processed/{name}.parquet")
 
+def downcast(dataframe):
+    def downcast_column(column):
+        if column.dtype.kind == "f":
+            return pandas.to_numeric(column, downcast="float")
+        if column.dtype.kind in "iu":
+            kind = "unsigned" if column.min() >= 0 else "integer"
+            return pandas.to_numeric(column, downcast=kind)
+        return column
+
+    return dataframe.apply(downcast_column)
+
 inputs = read_dataset("inputs.csv", ["transaction_id", "previous_transaction_id", "previous_transaction_position"])
 inputs = inputs.drop(columns=["previous_transaction_position"])
 save_parquet(inputs, "inputs")

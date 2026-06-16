@@ -59,3 +59,28 @@ def plot_time_distribution(series, freq: str) -> None:
     pyplot.xticks(rotation=45, ha='right')
     
     save_plot_image("popular_time_distribution")
+
+def plot_bet_correlation(df, col1, col2):
+    corr = df[col1].corr(df[col2])
+    fig, ax = pyplot.subplots()
+    ax.scatter(df[col1], df[col2], alpha=0.5, s=10)
+    ax.set(xlabel=col1, ylabel=col2, title=f"{col1} vs {col2}  |  r = {corr:.2f}")
+    ax.set_xlim(0, 0.04 * 1e8)
+    ax.set_ylim(0, 2.5 * 1e8)
+
+    save_plot_image("bet_correlation")
+
+# TODO: Show better the distribution without the outlier
+def plot_bet_distance(series):
+    fig, (ax1, ax2) = pyplot.subplots(1, 2, figsize=(16, 4))
+    ax1.plot(series.values)
+    ax1.set_xlabel("Index")
+    ax1.set_ylabel("Time difference (s)")
+    ax1.set_title("Time difference between consecutive timestamps")
+    ax2.hist(series.dropna(), bins=50, edgecolor="black")
+    ax2.set_yscale("log")
+    ax2.set_xlabel("Time difference (s)")
+    ax2.set_ylabel("Count (log scale)")
+    ax2.set_title("Distribution (log scale)")
+
+    save_plot_image("bet_distance")
