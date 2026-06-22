@@ -20,18 +20,18 @@ def plot_satoshi_dice_popularity(dataframe):
 
     fig, (ax1, ax2) = pyplot.subplots(1, 2, figsize=(16, 6))
 
-    ax1.barh(top_amount["Name"], top_amount["amount"] / 1e9)
-    ax1.set_xlabel("Amount Spent (billions satoshi)")
+    ax1.barh(top_amount["name"], top_amount["amount"] / 1e9)
+    ax1.set_xscale("log")
+    ax1.set_xlabel("Amount Spent")
     ax1.set_title("Top Addresses by Amount Spent")
     ax1.xaxis.set_major_formatter(pyplot.FuncFormatter(lambda x, _: f"{x:.1f}B"))
 
-    ax2.barh(top_amount["Name"], top_amount["count"] / 1e3)
+    ax2.barh(top_amount["name"], top_amount["count"] / 1e3)
+    ax2.set_xscale("log")
     ax2.set_xlabel("Transaction Count (thousands)")
     ax2.set_title("Top Addresses by Transaction Count")
     ax2.xaxis.set_major_formatter(pyplot.FuncFormatter(lambda x, _: f"{x:.0f}K"))
 
-    ax1.set_xscale("log")
-    ax2.set_xscale("log")
 
     save_plot_image("satoshi_dice_popularity")
 
@@ -56,8 +56,11 @@ def plot_time_distribution(series, freq: str) -> None:
     ax.set_title(f'Transactions per {freq}')
     ax.set_xlabel('Time')
     ax.set_ylabel('Count')
+
+    ax.set_xticklabels([ts.strftime('%Y-%m-%d') for ts in series.index])
+
     pyplot.xticks(rotation=45, ha='right')
-    
+
     save_plot_image("popular_time_distribution")
 
 def plot_bet_correlation(df, col1, col2):
@@ -70,7 +73,7 @@ def plot_bet_correlation(df, col1, col2):
 
     save_plot_image("bet_correlation")
 
-# TODO: Show better the distribution without the outlier
+# TODO: Show better the distribution without the outlier and remove the time difference graph, only keep the distribution
 def plot_bet_distance(series):
     fig, (ax1, ax2) = pyplot.subplots(1, 2, figsize=(16, 4))
     ax1.plot(series.values)
