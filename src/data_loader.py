@@ -13,6 +13,7 @@ def read_parquet(name, columns=None):
     return pandas.read_parquet(f"../data/processed/{name}.parquet", columns=columns)
 
 if __name__ == "__main__":
+    # TODO: Input transaction id is a float?
     inputs = read_dataset("inputs.csv", ["transaction_id", "input_transaction_id", "input_transaction_position"])
 
     outputs = read_dataset("outputs.csv", ["transaction_id", "output_position", "output_address_id", "amount", "script_type"])
@@ -29,13 +30,13 @@ if __name__ == "__main__":
     transactions = transactions[~invalid_transactions]
     transactions["timestamp"] = pandas.to_datetime(transactions["timestamp"], unit="s")
 
+    complete_transactions = transactions.merge(inputs, how="left").merge(outputs, how="left")
+
     mappings = read_dataset("mappings.csv", ["address_hash", "address_id"])
 
     satoshi_dices = pandas.read_csv("../satoshiDiceInfos.tsv", sep='\t')[["Name", "Address"]]
     satoshi_dices.columns = ["name", "address_hash"]
     satoshi_dices = satoshi_dices.merge(mappings)
-
-    complete_transactions = transactions.merge(inputs, how="left").merge(outputs, how="left")
 
     complete_transactions["is_satoshi_bet"] = complete_transactions["output_address_id"].isin(satoshi_dices["address_id"])
 
