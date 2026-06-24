@@ -33,6 +33,7 @@ if __name__ == "__main__":
     complete_transactions = transactions.merge(inputs, how="left").merge(outputs, how="left")
 
     mappings = read_dataset("mappings.csv", ["address_hash", "address_id"])
+    save_parquet(mappings, "mappings")
 
     satoshi_dices = pandas.read_csv("../satoshiDiceInfos.tsv", sep='\t')[["Name", "Address"]]
     satoshi_dices.columns = ["name", "address_hash"]

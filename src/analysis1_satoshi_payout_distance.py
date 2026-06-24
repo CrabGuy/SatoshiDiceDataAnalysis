@@ -5,7 +5,7 @@ transactions = read_parquet("transactions", columns=["transaction_id", "transact
 # dropping transactions which don't have an input (which have not been spent yet)
 transactions = transactions.dropna()
 
-# TODO: maybe this needs to be fixed
+# TODO: IMPORTANT FIX THIS BBY ADDING INPUT POSITION
 satoshi_payouts = transactions.merge(
     transactions[transactions["is_satoshi_bet"]],
     left_on="transaction_id",
