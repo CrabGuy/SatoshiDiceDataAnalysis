@@ -5,21 +5,25 @@ from data_loader import read_parquet
 transactions = read_parquet("transactions", columns=["timestamp", "is_satoshi_bet", "amount", "transaction_id"])
 satoshi_bets = transactions[transactions["is_satoshi_bet"]]
 
-def resample(dataframe, start):
-	TIME_STEP = "1ME"
-	return dataframe[dataframe["timestamp"].between(start, "2023-12-31")].resample(TIME_STEP, on="timestamp")
+earliest_satoshi_bet_timestamp = satoshi_bets["timestamp"].min()
 
-sampled_transactions_amount = resample(transactions, satoshi_bets["timestamp"].min())["transaction_id"].nunique()
-sampled_satoshi_bets = resample(satoshi_bets, satoshi_bets["timestamp"].min())["transaction_id"].nunique()
+def resample(dataframe, start, time_step="1ME"):
+	return dataframe[dataframe["timestamp"].between(start, "2023-12-31")].resample(time_step, on="timestamp")
 
-relative_amounts = (sampled_satoshi_bets / sampled_transactions_amount * 100)
+def resampled_amount(dataframe, start):
+	return resample(dataframe, start)["transaction_id"].nunique()
+
+transactions_amount = resampled_amount(transactions, earliest_satoshi_bet_timestamp)
+satoshi_bets_amount = resampled_amount(satoshi_bets, earliest_satoshi_bet_timestamp)
+
+relative_amounts = (satoshi_bets_amount / transactions_amount * 100)
 print(relative_amounts)
 
 plot_relative_transaction_percentage(relative_amounts)
 
 absolute_amounts = pandas.DataFrame({
-    "total": sampled_transactions_amount,
-    "satoshi": sampled_satoshi_bets
+    "total": transactions_amount,
+    "satoshi": satoshi_bets_amount
 })
 print(absolute_amounts)
 

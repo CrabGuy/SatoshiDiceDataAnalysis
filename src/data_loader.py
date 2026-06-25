@@ -1,4 +1,5 @@
 import pandas
+
 pandas.set_option('display.max_columns', None)
 pandas.set_option('display.width', None)
 pandas.set_option('display.max_colwidth', None)
@@ -41,7 +42,6 @@ if __name__ == "__main__":
 
     complete_transactions["is_satoshi_bet"] = complete_transactions["output_address_id"].isin(satoshi_dices["address_id"])
 
-    # key = ["transaction_id", "input_transaction_id", "input_transaction_position", "output_position"]
     save_parquet(complete_transactions, "transactions")
     save_parquet(satoshi_dices, "satoshi_dices")
     # TODO: Include sanity checks everywhere

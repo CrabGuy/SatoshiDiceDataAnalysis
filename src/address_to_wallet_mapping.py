@@ -46,7 +46,3 @@ def get_wallet(cache: dict, driver, bitcoin_address):
     wallet = online_get_wallet(driver, bitcoin_address)
     save_to_cache(bitcoin_address, wallet, cache)
     return wallet
-
-if __name__ == "__main__":
-    bitcoin_address = "1LT7i483B8FoCFdA4bMQmbWMSQek7vYKfv"
-    print(get_wallet(bitcoin_address))
