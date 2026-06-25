@@ -16,8 +16,10 @@ def resampled_amount(dataframe, start):
 transactions_amount = resampled_amount(transactions, earliest_satoshi_bet_timestamp)
 satoshi_bets_amount = resampled_amount(satoshi_bets, earliest_satoshi_bet_timestamp)
 
+transactions_amount.name = None
+satoshi_bets_amount.name = None
+
 relative_amounts = (satoshi_bets_amount / transactions_amount * 100)
-print(relative_amounts)
 
 plot_relative_transaction_percentage(relative_amounts)
 
@@ -25,6 +27,5 @@ absolute_amounts = pandas.DataFrame({
     "total": transactions_amount,
     "satoshi": satoshi_bets_amount
 })
-print(absolute_amounts)
 
 plot_absolute_transaction_percentage(absolute_amounts)

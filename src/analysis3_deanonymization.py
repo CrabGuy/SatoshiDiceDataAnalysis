@@ -3,6 +3,7 @@ import csv
 from itertools import islice
 import uuid
 from collections import Counter
+import pandas
 
 def read_first_k_chains(filepath: str, k: int) -> list[list[str]]:
     with open(filepath, newline="", encoding="utf-8") as f:
@@ -29,8 +30,11 @@ def summarize_chain(bitcoin_addresses: list[str], wallet_addresses: list[str]) -
         "dominant_wallet_percentage": dominant_wallet_count / len(wallet_addresses) * 100,
     }
 
-parsed = [summarize_chain(bitcoin_addresses, wallet_addresses)
+chains_data = [summarize_chain(bitcoin_addresses, wallet_addresses)
           for bitcoin_addresses, wallet_addresses in zip(bitcoin_address_chains, wallet_address_chains)]
 
-# TODO: Display results
-print(parsed)
+chains_data = pandas.DataFrame(chains_data)
+
+chains_data.to_csv("../data/processed/deanonymized_chains.csv", index=None)
+
+print(chains_data)

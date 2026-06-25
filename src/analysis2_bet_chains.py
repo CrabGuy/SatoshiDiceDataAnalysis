@@ -30,6 +30,5 @@ paths_lengths = [len(nodes) for nodes in paths_nodes]
 
 length_distribution = pandas.Series(paths_lengths).value_counts().sort_index()
 
-# TODO: fix this plot and all the others
 plot_chain_length_distribution(length_distribution)
 save_to_csv('../data/processed/simple_bet_chain_nodes.csv', paths_nodes)

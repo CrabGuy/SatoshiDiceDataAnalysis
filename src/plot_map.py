@@ -8,4 +8,4 @@ def plot_map(amount_popular_dices, bets_dataframe, map_function, plot_function):
 
     distances = [map_function(filtered_bets(bets_dataframe, dice_id)) for dice_id in most_popular_dices]
 
-    return [plot_function(distance, index) for (index, distance) in enumerate(distances)]
+    return plot_function([(distance, index + 1) for (index, distance) in enumerate(distances)])

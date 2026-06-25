@@ -7,7 +7,7 @@ transactions = read_parquet("transactions")
 satoshi_bets = transactions[transactions["is_satoshi_bet"]]
 satoshi_bets.drop_duplicates(subset="transaction_id")
 
-def temporal_distribution(bets: pandas.DataFrame, time_step = "1W"):
+def temporal_distribution(bets: pandas.DataFrame, time_step = "1ME"):
     return bets.resample(time_step, on="timestamp").size()
 
 plot_map(
