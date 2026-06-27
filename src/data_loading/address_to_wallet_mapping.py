@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 import csv
 import os
 
-CACHE_FILE = "../data/processed/wallet_cache.csv"
+CACHE_FILE = "./data/processed/wallet_cache.csv"
 
 def load_cache(cache_file: str = CACHE_FILE) -> dict:
     cache = {}

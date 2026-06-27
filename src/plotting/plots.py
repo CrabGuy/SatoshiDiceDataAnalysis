@@ -14,7 +14,7 @@ def is_running_in_notebook() -> bool:
 
 def save_plot_image(name):
     pyplot.tight_layout()
-    pyplot.savefig(f"../outputs/figures/{name}.png", dpi=300)
+    pyplot.savefig(f"./outputs/figures/{name}.png", dpi=300)
 
     if is_running_in_notebook():
         pyplot.show()

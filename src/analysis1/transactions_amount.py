@@ -1,6 +1,6 @@
 import pandas
-from plots import plot_absolute_transaction_percentage, plot_relative_transaction_percentage
-from data_loader import read_parquet
+from src.plotting.plots import plot_absolute_transaction_percentage, plot_relative_transaction_percentage
+from src.data_loading.data_loader import read_parquet
 
 transactions = read_parquet("transactions", columns=["timestamp", "is_satoshi_bet", "amount", "transaction_id"])
 satoshi_bets = transactions[transactions["is_satoshi_bet"]]

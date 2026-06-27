@@ -1,7 +1,7 @@
-from data_loader import read_parquet
+from src.data_loading.data_loader import read_parquet
 import pandas
 
-most_popular_dices = pandas.read_csv("../data/processed/sorted_satoshi_dices.csv", header=None)[0]
+most_popular_dices = pandas.read_csv("./data/processed/sorted_satoshi_dices.csv", header=None)[0]
 
 def k_most_popular_dices(k):
     return most_popular_dices.head(k).to_list()

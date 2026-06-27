@@ -1,5 +1,5 @@
 import pandas
-from satoshi_dices_info import address_hash
+from src.data_loading.satoshi_dices_info import address_hash
 
 def simple_bets(transactions):
     grouped_transactions = transactions.groupby('transaction_id')

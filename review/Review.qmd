@@ -1,0 +1,95 @@
+---
+title: "SatoshiDice analysis review"
+execute:
+  cache: true
+---
+
+# TODO: Make the notebook and pdf rose-pine-dawn colored
+
+# Analisi delle transazioni SatoshiDice
+La seguente relazione analizzera' i dati di transazioni bitcoin per ricavare informazioni sulle scommesse effettuate dagli utenti utilizzando il servizo di betting on-chain SatoshiDice.
+
+# Prima parte: analisi dei dati forniti
+
+Prima di iniziare a effettuare le analisi sui dati grezzi forniti effettuo degli step di preprocessing per migliorare le performance e controllare che i dati siano coerenti con il funzionamento di una normale blockchain.
+
+## Preprocessing
+
+I file ```.csv``` (e ```.tsv```) verranno letti da ```data_loader.py``` (il codice seguente) per poi essere trasformati in file ```.parquet```, un formato efficente per salvare dataframe pandas sul disco. Questi saranno i file che verranno importati da ogni script per l'analisi.
+
+```{python}
+{{< include ../src/data_loading/data_loader.py >}}
+```
+
+::: {.callout-warning}
+Sono pero' presenti dei problemi nei file grezzi!
+:::
+
+### Transazioni invalide
+
+Eseguendo dei test per verificare le garanzie dei file (es. valori nulli, righe invalide, format di ```timestamp```) e' risultato che siano presenti degli id di transazione duplicati!
+
+```{python}
+{{< include ../notes/invalid_transactions.py >}}
+```
+
+In particolare 2 coppie di transazioni hanno lo stesso ```transaction_id```, ma hanno diverso ```timestamp``` e ```block_id```. Ipotizzo siano due transazioni distinte a cui e' stato assegnato lo stesso id, ma per semplicita' le escludo dalle analisi.
+
+### Output invalidi
+
+Anche in ```outputs``` abbiamo un problema simile ma per motivi diversi.
+
+```{python}
+{{< include ../notes/invalid_outputs.py >}}
+```
+
+Nel dataset sono presenti due coppie con identico ```transaction_id``` e ```output_position```. Questo significa che sono presenti nella stessa transazione due ```output_position``` identici, combinazione che dovrebbe essere univoca da protocollo bitcoin.
+
+In questo caso pero' le righe sono identiche sia per quanto riguarda ```output_address_id``` sia per ```amount``` quindi ipotizzo siano semplicemente duplicate. Anche in questo caso verranno escluse dall'analisi.
+
+
+### Schema delle transazioni
+
+Per facilitare il modello mentale con cui ho approcciato le transazioni ho effettuato un merge preventivo di ```inputs```, ```outputs``` e ```transactions```. Questo dataframe espanso e' il modo in cui verranno analizzate le transazioni per il resto dell'analisi, ogni riga rappresenta una parte della transazione con input (```input_transaction_id``` e ```input_transaction_position```), output (```output_position```) e metadati della transazione (```amount```, ```timestamp``` ...).
+
+```{python}
+{{< include ../src/data_loading/preprocessing.py >}}
+```
+
+::: {.callout-tip}
+E' stata inserita anche una nuova riga ```is_satoshi_bet``` che indica se la transazione e' una scommessa
+:::
+
+A questo punto il dataset e' nel formato corretto per l'analisi e si possono cominciare a estrarre informazioni.
+
+## Analisi generali delle bet e dei payout
+
+### Transazioni di scommessa rispetto al numero complessivo di transazioni
+
+Calcolo la percentuale di transazioni di bet rispetto al numero complessivo di transazioni. Sia in termini di percentuale, sia in termini di numero assoluto di transazioni.
+
+```{python}
+{{< include ../src/analysis1/transactions_amount.py >}}
+```
+
+::: {.callout-tip}
+La prima transazione verso il servizio SatoshiDice risale al 21 aprile 2012 mentre la prima transazione bitcoin risale al 3 gennaio 2009. Nel grafico viene mostrato solamente il periodo rilevante in cui e' presente almeno una scommessa.
+:::
+
+## Popolarita' di ogni indirizzo di betting
+
+```{python}
+{{< include ../src/analysis1/dice_popularity.py >}}
+```
+
+Due servizi hanno risultati particolari rispetto agli altri: ```less than 64000``` e ```les than 1```. Che hanno rispettivamente la probabilita' di vincita piu' alta e piu' bassa.
+
+Per ```less than 64000``` possiamo notare che l'ammontare speso non riflette il numero di transazioni effettuate, cioe' si tendono a fare meno scommesse ma con somme piu' alte. Questo e' spiegato dal fatto che e' molto probabile vincere quindi per guadagnare le persone tengono a rischiare piu' soldi perche' sono piu' sicure di guadagnare (nonostante il valore atteso sia comunque negativo per ogni transazione).
+
+Per ```less than 1``` notiamo l'opposto, ovvero le persone tendono a fare piu' bet ma piccole. Questo e' spiegato dal fatto che le persone sono quasi sicure di perdere per cui non investono troppi soldi in ogni singola scommessa ma l'indirizzo e' nettamente piu' popolare in termini di ammontare di transazioni.
+
+E' interessante il fatto che in termini di soldi spesi per le scommesse ```less than 64000``` sia piu' di 37 volte maggiore di ```less than 1``` nonostante il valore atteso di ```less than 1``` sia migliore.
+
+::: {.callout-tip}
+Il risultato dell'ordinamento degli indirizzi e' stato salvato in un file ```.csv``` perche' sara' necessario successivamente
+:::

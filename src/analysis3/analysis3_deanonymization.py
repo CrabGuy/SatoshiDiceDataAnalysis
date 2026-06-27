@@ -1,4 +1,4 @@
-from address_to_wallet_mapping import get_wallet, load_cache, load_driver
+from src.data_loading.address_to_wallet_mapping import get_wallet, load_cache, load_driver
 import csv
 from itertools import islice
 import uuid
@@ -13,7 +13,7 @@ def read_first_k_chains(filepath: str, k: int) -> list[list[str]]:
 cache = load_cache()
 driver = load_driver()
 
-bitcoin_address_chains = read_first_k_chains("../data/processed/simple_bet_chain_nodes.csv", 10)
+bitcoin_address_chains = read_first_k_chains("./data/processed/simple_bet_chain_nodes.csv", 10)
 
 wallet_address_chains = [[get_wallet(cache, driver, bitcoin_address) for bitcoin_address in chain] for chain in bitcoin_address_chains]
 
@@ -35,6 +35,6 @@ chains_data = [summarize_chain(bitcoin_addresses, wallet_addresses)
 
 chains_data = pandas.DataFrame(chains_data)
 
-chains_data.to_csv("../data/processed/deanonymized_chains.csv", index=None)
+chains_data.to_csv("./outputs/deanonymized_chains.csv", index=None)
 
 print(chains_data)

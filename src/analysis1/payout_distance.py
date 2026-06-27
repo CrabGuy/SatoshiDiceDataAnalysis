@@ -1,5 +1,5 @@
-from plots import plot_payout_distance_distribution
-from data_loader import read_parquet
+from src.plotting.plots import plot_payout_distance_distribution
+from src.data_loading.data_loader import read_parquet
 import pandas
 
 transactions = read_parquet("transactions", columns=["transaction_id", "transaction_block_id", "input_transaction_id", "timestamp", "is_satoshi_bet"])
