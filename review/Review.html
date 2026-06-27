@@ -114,7 +114,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="preprocessing" class="level2">
 <h2 class="anchored" data-anchor-id="preprocessing">Preprocessing</h2>
 <p>I file <code>.csv</code> (e <code>.tsv</code>) verranno letti da <code>data_loader.py</code> (il codice seguente) per poi essere trasformati in file <code>.parquet</code>, un formato efficente per salvare dataframe pandas sul disco. Questi saranno i file che verranno importati da ogni script per l’analisi.</p>
-<div id="2dfdc6b7" class="cell" data-execution_count="1">
+<div id="c6768753" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>pandas.set_option(<span class="st">'display.max_columns'</span>, <span class="va">None</span>)</span>
@@ -146,7 +146,7 @@ Warning
 <section id="transazioni-invalide" class="level3">
 <h3 class="anchored" data-anchor-id="transazioni-invalide">Transazioni invalide</h3>
 <p>Eseguendo dei test per verificare le garanzie dei file (es. valori nulli, righe invalide, format di <code>timestamp</code>) e’ risultato che siano presenti degli id di transazione duplicati!</p>
-<div id="50fc9704" class="cell" data-execution_count="2">
+<div id="1c815f13" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.data_loader <span class="im">import</span> read_dataset</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>transactions <span class="op">=</span> read_dataset(<span class="st">"transactions.csv"</span>, [<span class="st">"timestamp"</span>, <span class="st">"transaction_block_id"</span>, <span class="st">"transaction_id"</span>, <span class="st">"is_codebase"</span>, <span class="st">"transaction_fee"</span>])</span>
@@ -175,7 +175,7 @@ Warning
 <section id="output-invalidi" class="level3">
 <h3 class="anchored" data-anchor-id="output-invalidi">Output invalidi</h3>
 <p>Anche in <code>outputs</code> abbiamo un problema simile ma per motivi diversi.</p>
-<div id="40eaf0d0" class="cell" data-execution_count="3">
+<div id="d48febb8" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.data_loader <span class="im">import</span> read_dataset</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>outputs <span class="op">=</span> read_dataset(<span class="st">"outputs.csv"</span>, [<span class="st">"transaction_id"</span>, <span class="st">"output_position"</span>, <span class="st">"output_address_id"</span>, <span class="st">"amount"</span>, <span class="st">"script_type"</span>])</span>
@@ -205,7 +205,7 @@ Warning
 <section id="schema-delle-transazioni" class="level3">
 <h3 class="anchored" data-anchor-id="schema-delle-transazioni">Schema delle transazioni</h3>
 <p>Per facilitare il modello mentale con cui ho approcciato le transazioni ho effettuato un merge preventivo di <code>inputs</code>, <code>outputs</code> e <code>transactions</code>. Questo dataframe espanso e’ il modo in cui verranno analizzate le transazioni per il resto dell’analisi, ogni riga rappresenta una parte della transazione con input (<code>input_transaction_id</code> e <code>input_transaction_position</code>), output (<code>output_position</code>) e metadati della transazione (<code>amount</code>, <code>timestamp</code> …).</p>
-<div id="646c6a15" class="cell" data-execution_count="4">
+<div id="ff75833a" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.data_loader <span class="im">import</span> read_dataset, save_parquet</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -257,7 +257,7 @@ Tip
 <section id="transazioni-di-scommessa-rispetto-al-numero-complessivo-di-transazioni" class="level3">
 <h3 class="anchored" data-anchor-id="transazioni-di-scommessa-rispetto-al-numero-complessivo-di-transazioni">Transazioni di scommessa rispetto al numero complessivo di transazioni</h3>
 <p>Calcolo la percentuale di transazioni di bet rispetto al numero complessivo di transazioni. Sia in termini di percentuale, sia in termini di numero assoluto di transazioni.</p>
-<div id="a6388931" class="cell" data-execution_count="5">
+<div id="63a212c9" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.plotting.plots <span class="im">import</span> plot_absolute_transaction_percentage, plot_relative_transaction_percentage</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.data_loader <span class="im">import</span> read_parquet</span>
@@ -327,7 +327,7 @@ Tip
 </section>
 <section id="popolarita-di-ogni-indirizzo-di-betting" class="level2">
 <h2 class="anchored" data-anchor-id="popolarita-di-ogni-indirizzo-di-betting">Popolarita’ di ogni indirizzo di betting</h2>
-<div id="c63cfbe8" class="cell" data-execution_count="6">
+<div id="3bd1a440" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.plotting.plots <span class="im">import</span> plot_satoshi_dice_popularity</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.data_loader <span class="im">import</span> read_parquet</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.satoshi_dices_info <span class="im">import</span> name, address_hash</span>
@@ -379,6 +379,373 @@ Tip
 <p>Il risultato dell’ordinamento degli indirizzi e’ stato salvato in un file <code>.csv</code> perche’ sara’ necessario successivamente</p>
 </div>
 </div>
+</section>
+<section id="distanza-tra-scommessa-e-payout" class="level2">
+<h2 class="anchored" data-anchor-id="distanza-tra-scommessa-e-payout">Distanza tra scommessa e payout</h2>
+<div id="dd24d974" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.plotting.plots <span class="im">import</span> plot_payout_distance_distribution</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.data_loader <span class="im">import</span> read_parquet</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>transactions <span class="op">=</span> read_parquet(<span class="st">"transactions"</span>, columns<span class="op">=</span>[<span class="st">"transaction_id"</span>, <span class="st">"transaction_block_id"</span>, <span class="st">"input_transaction_id"</span>, <span class="st">"is_satoshi_bet"</span>, <span class="st">"input_transaction_position"</span>, <span class="st">"output_position"</span>])</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># dropping transactions which don't have an input (which have not been spent yet)</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>transactions <span class="op">=</span> transactions.dropna()</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>satoshi_payouts <span class="op">=</span> pandas.merge(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    transactions[transactions[<span class="st">"is_satoshi_bet"</span>]],</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    transactions,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    left_on<span class="op">=</span>[<span class="st">"input_transaction_id"</span>, <span class="st">"input_transaction_position"</span>],</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    right_on<span class="op">=</span>[<span class="st">"transaction_id"</span>, <span class="st">"output_position"</span>]</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>block_delta <span class="op">=</span> satoshi_payouts[<span class="st">"transaction_block_id_x"</span>] <span class="op">-</span> satoshi_payouts[<span class="st">"transaction_block_id_y"</span>]</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>plot_payout_distance_distribution(block_delta)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Review_files/figure-html/cell-8-output-1.png" width="1141" height="470" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;Figure size 672x480 with 0 Axes&gt;</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Il 24% delle transazioni ha 0 blocchi di distanza</p>
+</div>
+</div>
+</section>
+<section id="analisi-sugli-indirizzi-di-satoshidice-piu-popolari" class="level2">
+<h2 class="anchored" data-anchor-id="analisi-sugli-indirizzi-di-satoshidice-piu-popolari">Analisi sugli indirizzi di SatoshiDice piu’ popolari</h2>
+<p>I tre indirizzi piu’ popolari sono i seguenti</p>
+<div id="6b59b311" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.satoshi_dices_info <span class="im">import</span> k_most_popular_dices, address_hash, name</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>popular_dices <span class="op">=</span> [name(address_hash(dice)) <span class="cf">for</span> dice <span class="kw">in</span> k_most_popular_dices(<span class="dv">3</span>)]</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(popular_dices)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>['lessthan 32000', 'lessthan 32768', 'lessthan 48000']</code></pre>
+</div>
+</div>
+<p>Indicati nei grafici come 1, 2 e 3</p>
+<section id="distribuzione-temporale-delle-bet" class="level3">
+<h3 class="anchored" data-anchor-id="distribuzione-temporale-delle-bet">Distribuzione temporale delle bet</h3>
+<div id="4743d3aa" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.data_loader <span class="im">import</span> read_parquet</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.plotting.plots <span class="im">import</span> plot_time_distribution</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.plotting.plot_map_popular <span class="im">import</span> plot_map_popular</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>transactions <span class="op">=</span> read_parquet(<span class="st">"transactions"</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>satoshi_bets <span class="op">=</span> transactions[transactions[<span class="st">"is_satoshi_bet"</span>]]</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>satoshi_bets.drop_duplicates(subset<span class="op">=</span><span class="st">"transaction_id"</span>)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> temporal_distribution(bets: pandas.DataFrame, time_step <span class="op">=</span> <span class="st">"1ME"</span>):</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> bets.resample(time_step, on<span class="op">=</span><span class="st">"timestamp"</span>).size()</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>plot_map_popular(</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    amount_popular_dices<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    bets_dataframe<span class="op">=</span>satoshi_bets,</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    map_function<span class="op">=</span>temporal_distribution,</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    plot_function<span class="op">=</span>plot_time_distribution</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Review_files/figure-html/cell-10-output-1.png" width="1142" height="1142" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;Figure size 672x480 with 0 Axes&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="correlazione-tra-somma-scommessa-e-commissione" class="level3">
+<h3 class="anchored" data-anchor-id="correlazione-tra-somma-scommessa-e-commissione">Correlazione tra somma scommessa e commissione</h3>
+<div id="2bd72d7f" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.data_loader <span class="im">import</span> read_parquet</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.plotting.plots <span class="im">import</span> plot_bet_correlation</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.plotting.plot_map_popular <span class="im">import</span> plot_map_popular</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>transactions <span class="op">=</span> read_parquet(<span class="st">"transactions"</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>satoshi_bets <span class="op">=</span> transactions[transactions[<span class="st">"is_satoshi_bet"</span>]]</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>satoshi_bets <span class="op">=</span> satoshi_bets.drop_duplicates(subset<span class="op">=</span>[<span class="st">"transaction_id"</span>, <span class="st">"output_position"</span>])</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> identity(x):</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>plot_map_popular(</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    amount_popular_dices<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    bets_dataframe<span class="op">=</span>satoshi_bets,</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    map_function<span class="op">=</span>identity,</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    plot_function<span class="op">=</span>plot_bet_correlation</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Review_files/figure-html/cell-11-output-1.png" width="1718" height="566" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;Figure size 672x480 with 0 Axes&gt;</code></pre>
+</div>
+</div>
+<p>Dato che i valori di correlazione sono prossimi allo 0 possiamo dedurne che non e’ presente una correlazione lineare. E’ possibile che sia presente una correlazione di forma non lineare, tra i vari test di correlazione effettuati non ho riscontrato nessun altra correlazione (es. inversa o di rango).</p>
+<p>Ipotizzo che sia improbabile che una correlazione tra somma scommessa e commissione abbia una forma cosi’ complicata da non essere riscontrata da queste ulteriori verifiche ma non posso affermare con certezza che non ne esista una.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Sono presenti alcune linee verticali e orizzontali su cui si concentrano i punti, questi sono valori “interi” in cui tendono ad aggirarsi sia le quantita’ scommesse che i valori delle commissioni</p>
+</div>
+</div>
+</section>
+<section id="intervalli-tra-bet-consecutive" class="level3">
+<h3 class="anchored" data-anchor-id="intervalli-tra-bet-consecutive">Intervalli tra bet consecutive</h3>
+<div id="4f60ec98" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.data_loader <span class="im">import</span> read_parquet</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.plotting.plots <span class="im">import</span> plot_bet_distance</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.plotting.plot_map_popular <span class="im">import</span> plot_map_popular</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>transactions <span class="op">=</span> read_parquet(<span class="st">"transactions"</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>satoshi_bets <span class="op">=</span> transactions[transactions[<span class="st">"is_satoshi_bet"</span>]]</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>satoshi_bets <span class="op">=</span> satoshi_bets.drop_duplicates(subset<span class="op">=</span><span class="st">"transaction_id"</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bet_distance(dataframe: pandas.DataFrame):</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dataframe.sort_values(<span class="st">"transaction_block_id"</span>)[<span class="st">"timestamp"</span>].diff().dt.total_seconds()</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>plot_map_popular(</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    amount_popular_dices<span class="op">=</span><span class="dv">3</span>,</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    bets_dataframe<span class="op">=</span>satoshi_bets,</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    map_function<span class="op">=</span>bet_distance,</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>    plot_function<span class="op">=</span>plot_bet_distance</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Review_files/figure-html/cell-12-output-1.png" width="2294" height="468" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;Figure size 672x480 with 0 Axes&gt;</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="seconda-parte-analisi-di-sequenze-di-scommesse" class="level1">
+<h1>Seconda parte: analisi di sequenze di scommesse</h1>
+<section id="descrizione-del-dominio-del-problema" class="level2">
+<h2 class="anchored" data-anchor-id="descrizione-del-dominio-del-problema">Descrizione del dominio del problema</h2>
+<p>Una catena di bet e’ definita come una sequenza di transazioni in cui gli output di una sono l’input di un’altra, stabilendo quindi un legame diretto e tracciabile tra le transazioni.</p>
+<p>Per ottenere delle catene lineari e facilmente interpretabili mi limito ad analizzare le <code>simple bet</code>.</p>
+<p>Ovvero le transazioni della forma: - Un input - Un output a un indirizzo satoshi dice - Un altro output di resto</p>
+<p>Due simple bet appartengono alla stessa catena se l’input della seconda coincide con l’output di resto della prima.</p>
+</section>
+<section id="calcolo-dei-risultati" class="level2">
+<h2 class="anchored" data-anchor-id="calcolo-dei-risultati">Calcolo dei risultati</h2>
+<div id="d8dac0c9" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.satoshi_dices_info <span class="im">import</span> k_most_popular_dices</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.plotting.plots <span class="im">import</span> plot_chain_length_distribution</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.data_loader <span class="im">import</span> read_parquet</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.analysis2.bet_chains_functions <span class="im">import</span> simple_bets, transaction_connections, edges_attribute, save_to_csv</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>transactions <span class="op">=</span> read_parquet(</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"transactions"</span>,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span>[<span class="st">"transaction_id"</span>, <span class="st">"output_position"</span>, <span class="st">"input_transaction_id"</span>, <span class="st">"input_transaction_position"</span>, <span class="st">"output_address_id"</span>, <span class="st">"is_satoshi_bet"</span>]</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>simple_bet_transactions <span class="op">=</span> simple_bets(transactions)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>simple_bet_connections <span class="op">=</span> transaction_connections(simple_bet_transactions)</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>most_popular_dice_id <span class="op">=</span> k_most_popular_dices(<span class="dv">1</span>)[<span class="dv">0</span>]</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>popular_simple_bets_connections <span class="op">=</span> simple_bet_connections[simple_bet_connections[<span class="st">"input_address"</span>] <span class="op">==</span> most_popular_dice_id]</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>G <span class="op">=</span> networkx.from_pandas_edgelist(</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    popular_simple_bets_connections,</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>    source<span class="op">=</span><span class="st">"input_id"</span>,</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    target<span class="op">=</span><span class="st">"output_id"</span>,</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>    edge_attr<span class="op">=</span>[<span class="st">"output_address"</span>],</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>    create_using<span class="op">=</span>networkx.DiGraph,</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>paths_nodes <span class="op">=</span> [edges_attribute(G, component, <span class="st">"output_address"</span>) <span class="cf">for</span> component <span class="kw">in</span> networkx.weakly_connected_components(G)]</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>paths_lengths <span class="op">=</span> [<span class="bu">len</span>(nodes) <span class="cf">for</span> nodes <span class="kw">in</span> paths_nodes]</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>length_distribution <span class="op">=</span> pandas.Series(paths_lengths).value_counts().sort_index()</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>save_to_csv(<span class="st">'./data/processed/simple_bet_chain_nodes.csv'</span>, paths_nodes)</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>plot_chain_length_distribution(length_distribution)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Review_files/figure-html/cell-13-output-1.png" width="757" height="468" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>&lt;Figure size 672x480 with 0 Axes&gt;</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La maggior parte del codice che gestisce le computazioni e’ nel file <code>bet_chains_functions</code>, lo snippet di codice qui sopra esprime in maniera chiara la pipeline di operazioni effettuate per trovare il risultato</p>
+</div>
+</div>
+<p>E’ bene notare che il grafo ha una forma particolare. Per via del modo in cui e’ definita una catena di simple bet ha effettivamente solamente un input e un output rilevanti (dato che l’output verso satoshi dice non e’ utile per definire la forma dei cammini). Per cui il grafico e’ un insieme di cammini lineari e la libreria <code>networkx</code> fornisce una funzione per trovare le componenti debolmente connesse, che nel nostro caso calcola i cammini lineari.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Il grafico puo’ essere visto come una foresta di alberi degeneri o strutture simili a linked list</p>
+</div>
+</div>
+</section>
+</section>
+<section id="terza-parte-appartenenza-delle-catene-a-un-wallet" class="level1">
+<h1>Terza parte: appartenenza delle catene a un wallet</h1>
+<section id="calcolo-dei-risultati-1" class="level2">
+<h2 class="anchored" data-anchor-id="calcolo-dei-risultati-1">Calcolo dei risultati</h2>
+<p>Nella sezione precedente sono stati trovati i nodi che appartengono ai cammini lineari, ora verra’ effettuata un’operazione di de-anonimizzazione (per quanto possibile) appoggiandosi al servizio <code>Wallet Explorer</code> per verificare se le intere catene di transazioni sono riconducibili a un singolo portafoglio.</p>
+<div id="7dfdd55f" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> src.data_loading.address_to_wallet_mapping <span class="im">import</span> get_wallet, load_cache, load_driver</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> csv</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> islice</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> uuid</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> read_first_k_chains(filepath: <span class="bu">str</span>, k: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">list</span>[<span class="bu">str</span>]]:</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(filepath, newline<span class="op">=</span><span class="st">""</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> f:</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">list</span>(islice(csv.reader(f), k))</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>cache <span class="op">=</span> load_cache()</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>driver <span class="op">=</span> load_driver()</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>bitcoin_address_chains <span class="op">=</span> read_first_k_chains(<span class="st">"./data/processed/simple_bet_chain_nodes.csv"</span>, <span class="dv">10</span>)</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>wallet_address_chains <span class="op">=</span> [[get_wallet(cache, driver, bitcoin_address) <span class="cf">for</span> bitcoin_address <span class="kw">in</span> chain] <span class="cf">for</span> chain <span class="kw">in</span> bitcoin_address_chains]</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> summarize_chain(bitcoin_addresses: <span class="bu">list</span>[<span class="bu">str</span>], wallet_addresses: <span class="bu">list</span>[<span class="bu">str</span>]) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    dominant_wallet_address, dominant_wallet_count <span class="op">=</span> Counter(wallet_addresses).most_common(<span class="dv">1</span>)[<span class="dv">0</span>]</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">"id"</span>: uuid.uuid4(),</span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">"chain_length"</span>: <span class="bu">len</span>(bitcoin_addresses),</span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">"unique_addresses"</span>: <span class="bu">len</span>(<span class="bu">set</span>(bitcoin_addresses)),</span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">"unique_wallets"</span>: <span class="bu">len</span>(<span class="bu">set</span>(wallet_addresses)),</span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">"dominant_wallet"</span>: dominant_wallet_address,</span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">"dominant_wallet_percentage"</span>: dominant_wallet_count <span class="op">/</span> <span class="bu">len</span>(wallet_addresses) <span class="op">*</span> <span class="dv">100</span>,</span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>chains_data <span class="op">=</span> [summarize_chain(bitcoin_addresses, wallet_addresses)</span>
+<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> bitcoin_addresses, wallet_addresses <span class="kw">in</span> <span class="bu">zip</span>(bitcoin_address_chains, wallet_address_chains)]</span>
+<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a>chains_data <span class="op">=</span> pandas.DataFrame(chains_data)</span>
+<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a>chains_data.to_csv(<span class="st">"./outputs/deanonymized_chains.csv"</span>, index<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(chains_data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                     id  chain_length  unique_addresses  \
+0  df94ce40-e700-4bbd-92f2-67e3b70b394d           716               716   
+1  d8792eba-9245-4f77-b102-0173aebecb1a           441               441   
+2  4f7bfda4-41e3-452e-ae69-4219064a8657           351               351   
+3  363ba56a-d2a0-4f9e-b903-735e0aab816a           292               292   
+4  2d74b9de-119f-4da8-b27e-0c5a81bf07bb           272               272   
+5  643493d7-cf69-4162-9f97-ce3b59420f8a           245               245   
+6  7601c213-5eb9-47b3-a947-0055ef24352d           242               242   
+7  84ff0e00-d896-4316-a96f-ea459447169f           234               234   
+8  9037d6af-bfff-4d09-a9e7-00a9ecacddd2           232               232   
+9  62593ef4-e3f9-4c16-9460-21714fd4fc08           228               228   
+
+   unique_wallets dominant_wallet  dominant_wallet_percentage  
+0              76    [0025d633f8]                   50.139665  
+1               1    [00002c4379]                  100.000000  
+2               5    [0025d633f8]                   79.202279  
+3               5    [000f35cb33]                   75.684932  
+4               2    [000305c34c]                   99.632353  
+5              20    [001b861dc5]                   54.285714  
+6              25    [004bf37491]                   71.900826  
+7              11    [0005f727db]                   88.034188  
+8               3    [0012ea9acf]                   93.965517  
+9              36    [0012ea9acf]                   78.508772  </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Le informazioni per associare gli indirizzi ai portafogli sono estratte dal sito <code>WalletExplorer.com</code> tramite web scraping in quanto requisito del progetto, il sito in realta’ fornisce un’API pubblica che permette di fare richieste di informazioni sugli indirizzi in batch</p>
+</div>
+</div>
+<p>Il codice utilizza la libreria <code>Selenium</code> per aprire un’istanza di un browser che apre il sito e trova il nome del portafoglio associato tramite selezione per nome di classe.</p>
+<p>I risultati vengono poi salvati in un file di cache cosi’ che le successive chiamate possano riutilizzarli.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Come identificatore per il risultato finale ho scelto di utilizzare degli <code>uuid</code> versione 4 per evitare di incorrere in problemi derivati dall’utilizzo di identificatori incrementali, come nel dataset iniziale del progetto</p>
+</div>
+</div>
+</section>
+<section id="considerazioni-sui-risultati" class="level2">
+<h2 class="anchored" data-anchor-id="considerazioni-sui-risultati">Considerazioni sui risultati</h2>
+<p>La maggior parte delle lunghe catene appartiene a un singolo wallet (nel caso della seconda piu’ lunga, tutta la catena). Questo conferma che le catene sono composte perlopiu’ da un unico utente che continua a scommettere i propri coin.</p>
 </section>
 </section>
 

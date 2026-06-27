@@ -58,52 +58,13 @@ def plot_satoshi_dice_popularity(dataframe):
     save_plot_image("satoshi_dice_popularity")
 
 
-def plot_payout_distance_distribution(block_delta_dataframe, time_delta_dataframe, num_outlier_bins=20):
-    fig, (ax1, ax2, ax3) = pyplot.subplots(1, 3, figsize=(22, 6))
-
-    ax1.hist(block_delta_dataframe, bins=50, edgecolor="black")
+def plot_payout_distance_distribution(block_delta_dataframe):
+    fig, ax1 = pyplot.subplots(figsize=(12, 5))
+    ax1.hist(block_delta_dataframe, bins=20, edgecolor="black")
     ax1.set_xlabel("Block Distance")
     ax1.set_ylabel("Count")
     ax1.set_yscale("log")
     ax1.set_title("Bet to Payout Distance (Blocks)")
-
-    time_delta = time_delta_dataframe.dropna()
-    if not pd.api.types.is_timedelta64_dtype(time_delta):
-        time_delta = pd.to_timedelta(time_delta, unit="s")
-    data_unit = time_delta.values.dtype.name.split("[")[-1].rstrip("]")
-    bin_edges = pd.to_timedelta(
-        [0, 60, 300, 600, 1800, 3600, 21600, 86400, 259200, 604800, 3650 * 86400],
-        unit="s",
-    ).as_unit(data_unit)
-    bin_labels = ["<1m", "1-5m", "5-10m", "10-30m", "30-60m", "1-6h", "6-24h", "1-3d", "3-7d", ">7d"]
-    binned_counts = pd.cut(time_delta, bins=bin_edges, labels=bin_labels).value_counts().reindex(bin_labels)
-    ax2.bar(bin_labels, binned_counts.values, edgecolor="black")
-    ax2.set_xlabel("Time Distance")
-    ax2.set_ylabel("Count")
-    ax2.set_title("Bet to Payout Distance (Time)")
-    ax2.tick_params(axis="x", rotation=45)
-
-    seven_days = pd.to_timedelta(7, unit="D")
-    outliers_days = (time_delta[time_delta > seven_days].dt.total_seconds() / 86400).values
-
-    if len(outliers_days) > 0:
-        min_d, max_d = outliers_days.min(), outliers_days.max()
-        if min_d == max_d:
-            ax3.scatter([min_d], [len(outliers_days)], s=30, edgecolor="black", linewidth=0.5)
-        else:
-            bins = np.logspace(np.log10(min_d), np.log10(max_d), num=num_outlier_bins)
-            counts, bin_edges_outliers = np.histogram(outliers_days, bins=bins)
-            bin_centers = np.sqrt(bin_edges_outliers[:-1] * bin_edges_outliers[1:])
-            mask = counts > 0
-            ax3.scatter(bin_centers[mask], counts[mask], s=30, edgecolor="black", linewidth=0.5)
-        ax3.set_xscale("log")
-        ax3.set_yscale("log")
-    else:
-        ax3.text(0.5, 0.5, "No outliers >7d", ha="center", va="center", transform=ax3.transAxes)
-
-    ax3.set_xlabel("Time Distance (days, >7d only)")
-    ax3.set_ylabel("Count")
-    ax3.set_title("Bet to Payout Distance Outliers (>7d, log-binned)")
 
     save_plot_image("payout_distance_distribution")
 
@@ -132,14 +93,27 @@ def plot_bet_correlation(items: list, col1="transaction_fee", col2="amount"):
     if len(items) == 1:
         axes = [axes]
 
+    rng = np.random.default_rng(42)
+
     for ax, (df, index) in zip(axes, items):
         corr = df[col1].corr(df[col2])
-        ax.scatter(df[col1], df[col2], alpha=0.5, s=10)
+
+        x = df[col1].to_numpy()
+        y = df[col2].to_numpy()
+
+        x_jitter_scale = 0.01 * (0.04 * 1e8)
+        y_jitter_scale = 0.01 * (2.5 * 1e8)
+
+        x_jit = x + rng.normal(0, x_jitter_scale, size=len(x))
+        y_jit = y + rng.normal(0, y_jitter_scale, size=len(y))
+
+        ax.scatter(x, y, alpha=0.35, s=8, color="C0", linewidths=0)
+        ax.scatter(x_jit, y_jit, alpha=0.15, s=8, color="C0", linewidths=0)
+
         ax.set(xlabel=col1, ylabel=col2, title=f"{col1} vs {col2} ({index})  |  r = {corr:.2f}")
         ax.set_xlim(0, 0.04 * 1e8)
         ax.set_ylim(0, 2.5 * 1e8)
 
-    pyplot.tight_layout()
     save_plot_image("bet_correlation")
 
 
