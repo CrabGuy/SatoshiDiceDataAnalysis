@@ -2,18 +2,21 @@
 title: "SatoshiDice analysis review"
 format:
   pdf:
+    pdf-engine: lualatex
     highlight-style: rose-pine-dawn.theme
     include-in-header: rose-pine-dawn.tex
-    documentclass: article
+    documentclass: scrartcl
+execute:
+    eval: false
 jupyter: python3
 ---
 
 # Analisi delle transazioni SatoshiDice
-La seguente relazione analizzera' i dati di transazioni bitcoin per ricavare informazioni sulle scommesse effettuate dagli utenti utilizzando il servizo di betting on-chain SatoshiDice.
+La seguente relazione analizzera' i **dati di transazioni bitcoin** per ricavare informazioni sulle scommesse piazzate dagli utenti utilizzando il servizo di betting on-chain SatoshiDice.
 
 # Prima parte: analisi dei dati forniti
 
-Prima di iniziare a effettuare le analisi sui dati grezzi forniti effettuo degli step di preprocessing per migliorare le performance e controllare che i dati siano coerenti con il funzionamento di una normale blockchain.
+Prima di iniziare a effettuare le analisi sui dati grezzi forniti si applicano degli **step di preprocessing** per migliorare le performance e controllare che i dati siano coerenti con il funzionamento di una normale blockchain.
 
 ## Preprocessing
 
@@ -24,18 +27,18 @@ I file ```.csv``` (e ```.tsv```) verranno letti da ```data_loader.py``` (il codi
 ```
 
 ::: {.callout-warning}
-Sono pero' presenti dei problemi nei file grezzi!
+Sono presenti dei problemi nei file grezzi
 :::
 
 ### Transazioni invalide
 
-Eseguendo dei test per verificare le garanzie dei file (es. valori nulli, righe invalide, format di ```timestamp```) e' risultato che siano presenti degli id di transazione duplicati!
+Durante la fase di validazione dei dati (es. controllo dei valori nulli e del formato del timestamp), è emersa la presenza di **ID di transazione duplicati**.
 
 ```{python}
 {{< include ../notes/invalid_transactions.py >}}
 ```
 
-In particolare 2 coppie di transazioni hanno lo stesso ```transaction_id```, ma hanno diverso ```timestamp``` e ```block_id```. Ipotizzo siano due transazioni distinte a cui e' stato assegnato lo stesso id, ma per semplicita' le escludo dalle analisi.
+In particolare 2 coppie di transazioni hanno lo stesso ```transaction_id```, ma hanno diverso ```timestamp``` e ```block_id```. Si ipotizza che siano due transazioni distinte a cui e' stato assegnato lo stesso id, ma per semplicita' vengono **escluse dalle analisi**.
 
 ### Output invalidi
 
@@ -45,30 +48,30 @@ Anche in ```outputs``` abbiamo un problema simile ma per motivi diversi.
 {{< include ../notes/invalid_outputs.py >}}
 ```
 
-Nel dataset sono presenti due coppie con identico ```transaction_id``` e ```output_position```. Questo significa che sono presenti nella stessa transazione due ```output_position``` identici, combinazione che dovrebbe essere univoca da protocollo bitcoin.
+Nel dataset sono presenti due coppie con identico ```transaction_id``` e ```output_position```. Questo significa che sono presenti nella stessa transazione due ```output_position``` identici, combinazione che **dovrebbe essere univoca da protocollo bitcoin**.
 
-In questo caso pero' le righe sono identiche sia per quanto riguarda ```output_address_id``` sia per ```amount``` quindi ipotizzo siano semplicemente duplicate. Anche in questo caso verranno escluse dall'analisi.
+In questo caso pero' le righe sono identiche sia per quanto riguarda ```output_address_id``` sia per ```amount``` quindi e' plausibile che siano semplicemente duplicate. Anche in questo caso verranno **escluse dall'analisi**.
 
 
 ### Schema delle transazioni
 
-Per facilitare il modello mentale con cui ho approcciato le transazioni ho effettuato un merge preventivo di ```inputs```, ```outputs``` e ```transactions```. Questo dataframe espanso e' il modo in cui verranno analizzate le transazioni per il resto dell'analisi, ogni riga rappresenta una parte della transazione con input (```input_transaction_id``` e ```input_transaction_position```), output (```output_position```) e metadati della transazione (```amount```, ```timestamp``` ...).
+Per semplificare la modellazione dei dati, è stato applicato un merge preventivo di ```inputs```, ```outputs``` e ```transactions```. Questo dataframe espanso costituirà **la struttura di base per le successive elaborazioni**: ogni riga ne rappresenta una singola componente con input (```input_transaction_id``` e ```input_transaction_position```), output (```output_position```) e metadati della transazione (```amount```, ```timestamp``` ...).
 
 ```{python}
 {{< include ../src/data_loading/preprocessing.py >}}
 ```
 
 ::: {.callout-tip}
-E' stata inserita anche una nuova riga ```is_satoshi_bet``` che indica se la transazione e' una scommessa
+E' stata inserita anche una nuova colonna ```is_satoshi_bet``` che indica se la transazione e' una scommessa
 :::
 
 A questo punto il dataset e' nel formato corretto per l'analisi e si possono cominciare a estrarre informazioni.
 
-## Analisi generali delle bet e dei payout
+# Analisi generali delle bet e dei payout
 
-### Transazioni di scommessa rispetto al numero complessivo di transazioni
+## Transazioni di scommessa rispetto al numero complessivo di transazioni
 
-Calcolo la percentuale di transazioni di bet rispetto al numero complessivo di transazioni. Sia in termini di percentuale, sia in termini di numero assoluto di transazioni.
+Si calcola la percentuale di **transazioni di bet rispetto al numero complessivo di transazioni**. Sia in termini di percentuale, sia in termini di numero assoluto di transazioni.
 
 ```{python}
 {{< include ../src/analysis1/transactions_amount.py >}}
@@ -84,11 +87,11 @@ La prima transazione verso il servizio SatoshiDice risale al 21 aprile 2012 ment
 {{< include ../src/analysis1/dice_popularity.py >}}
 ```
 
-Due servizi hanno risultati particolari rispetto agli altri: ```less than 64000``` e ```les than 1```. Che hanno rispettivamente la probabilita' di vincita piu' alta e piu' bassa.
+Due servizi hanno risultati particolari rispetto agli altri: ```less than 64000``` e ```less than 1```. Che hanno rispettivamente la probabilita' di vincita piu' alta e piu' bassa.
 
-Per ```less than 64000``` possiamo notare che l'ammontare speso non riflette il numero di transazioni effettuate, cioe' si tendono a fare meno scommesse ma con somme piu' alte. Questo e' spiegato dal fatto che e' molto probabile vincere quindi per guadagnare le persone tengono a rischiare piu' soldi perche' sono piu' sicure di guadagnare (nonostante il valore atteso sia comunque negativo per ogni transazione).
+Per ```less than 64000``` l'ammontare speso non e' proporzionale al numero di transazioni: gli utenti tendono a piazzare **meno scommesse**, ma di importo maggiore. Data l'**elevata probabilità di vincita**, gli utenti mostrano una forte avversione al rischio: tendono a piazzare puntate più alte quando la probabilità di vincita è elevata, percependo l'investimento come più 'sicuro' (sebbene il valore atteso rimanga negativo).
 
-Per ```less than 1``` notiamo l'opposto, ovvero le persone tendono a fare piu' bet ma piccole. Questo e' spiegato dal fatto che le persone sono quasi sicure di perdere per cui non investono troppi soldi in ogni singola scommessa ma l'indirizzo e' nettamente piu' popolare in termini di ammontare di transazioni.
+Per ```less than 1``` si nota l'opposto, ovvero le persone tendono a fare **piu' bet** ma piccole. Al contrario, l'**alta probabilità di sconfitta** scoraggia puntate elevate; tuttavia, l'alta frequenza di queste piccole transazioni rende l'indirizzo più popolare in termini di ammontare assoluto.
 
 E' interessante il fatto che in termini di soldi spesi per le scommesse ```less than 64000``` sia piu' di 37 volte maggiore di ```less than 1``` nonostante il valore atteso di ```less than 1``` sia migliore.
 
@@ -128,13 +131,12 @@ Indicati nei grafici come 1, 2 e 3
 {{< include ../src/analysis1/bet_fee_correlation.py >}}
 ```
 
-Dato che i valori di correlazione sono prossimi allo 0 possiamo dedurne che non e' presente una correlazione lineare. E' possibile che sia presente una correlazione di forma non lineare, tra i vari test di correlazione effettuati non ho riscontrato nessun altra correlazione (es. inversa o di rango).
+Dato che i **valori di correlazione** sono **prossimi allo 0** possiamo dedurne che non e' presente una correlazione lineare. E' possibile che sia presente una correlazione di forma non lineare, tra i vari test di correlazione eseguiti non e' stata riscontrata nessun altra correlazione (es. inversa o di rango).
 
-Ipotizzo che sia improbabile che una correlazione tra somma scommessa e commissione abbia una forma cosi' complicata da non essere riscontrata da queste ulteriori verifiche ma non posso affermare con certezza che non ne esista una.
+Sebbene non si possa escludere in assoluto l'esistenza di una complessa correlazione non lineare, è altamente improbabile che un legame tra commissione e ammontare della transazione abbia questa forma.
 
-::: {.callout-tip}
-Sono presenti alcune linee verticali e orizzontali su cui si concentrano i punti, questi sono valori "interi" in cui tendono ad aggirarsi sia le quantita' scommesse che i valori delle commissioni
-:::
+
+Sono presenti alcune **linee verticali e orizzontali** su cui si concentrano i punti, questi sono valori "interi" in cui tendono ad aggirarsi sia le quantita' scommesse che i valori delle commissioni
 
 ### Intervalli tra bet consecutive
 
@@ -149,16 +151,16 @@ Sono presenti alcune linee verticali e orizzontali su cui si concentrano i punti
 Una catena di bet e' definita come una sequenza di transazioni in cui gli output di una sono l'input di un'altra, stabilendo quindi un legame diretto e tracciabile tra le transazioni.
 
 
-Per ottenere delle catene lineari e facilmente interpretabili mi limito ad analizzare le ```simple bet```.
+Per ottenere delle catene lineari e facilmente interpretabili ci si limita ad analizzare le **simple bet**.
 
 
 Ovvero le transazioni della forma:
-- Un input
-- Un output a un indirizzo satoshi dice
-- Un altro output di resto
+- Un **input**
+- Un **output** a un indirizzo satoshi dice
+- Un altro **output** di resto
 
 
-Due simple bet appartengono alla stessa catena se l'input della seconda coincide con l'output di resto della prima.
+Due simple bet appartengono alla stessa catena se l'**input della seconda** coincide con l'**output di resto della prima**.
 
 ## Calcolo dei risultati
 
@@ -170,17 +172,17 @@ Due simple bet appartengono alla stessa catena se l'input della seconda coincide
 La maggior parte del codice che gestisce le computazioni e' nel file ```bet_chains_functions```, lo snippet di codice qui sopra esprime in maniera chiara la pipeline di operazioni effettuate per trovare il risultato
 :::
 
-E' bene notare che il grafo ha una forma particolare. Per via del modo in cui e' definita una catena di simple bet ha effettivamente solamente un input e un output rilevanti (dato che l'output verso satoshi dice non e' utile per definire la forma dei cammini). Per cui il grafico e' un insieme di cammini lineari e la libreria ```networkx``` fornisce una funzione per trovare le componenti debolmente connesse, che nel nostro caso calcola i cammini lineari.
+E' bene notare che il grafo ha una forma particolare. Per via del modo in cui e' definita una catena di simple bet ha effettivamente solamente un input e un output rilevanti (dato che l'output verso satoshi dice non e' utile per definire la forma dei cammini). Per cui **il grafico e' un insieme di cammini lineari** e la libreria ```networkx``` fornisce una funzione per trovare le componenti debolmente connesse, che nel nostro caso calcola i cammini lineari.
 
 ::: {.callout-tip}
-Il grafico puo' essere visto come una foresta di alberi degeneri o strutture simili a linked list
+Dal punto di vista topologico, il grafo risultante si configura come un insieme di percorsi lineari disgiunti (assimilabili a linked list).
 :::
 
 # Terza parte: appartenenza delle catene a un wallet
 
 ## Calcolo dei risultati
 
-Nella sezione precedente sono stati trovati i nodi che appartengono ai cammini lineari, ora verra' effettuata un'operazione di de-anonimizzazione (per quanto possibile) appoggiandosi al servizio ```Wallet Explorer``` per verificare se le intere catene di transazioni sono riconducibili a un singolo portafoglio.
+Nella sezione precedente sono stati trovati i nodi che appartengono ai cammini lineari, ora verra' realizzata **un'operazione di de-anonimizzazione** (per quanto possibile) appoggiandosi al servizio ```Wallet Explorer``` per verificare se le intere catene di transazioni sono riconducibili a un singolo portafoglio.
 
 ```{python}
 {{< include ../src/analysis3/deanonymization.py >}}
@@ -196,7 +198,7 @@ Il codice utilizza la libreria ```Selenium``` per aprire un'istanza di un browse
 I risultati vengono poi salvati in un file di cache cosi' che le successive chiamate possano riutilizzarli.
 
 ::: {.callout-tip}
-Come identificatore per il risultato finale ho scelto di utilizzare degli ```uuid``` versione 4 per evitare di incorrere in problemi derivati dall'utilizzo di identificatori incrementali, come nel dataset iniziale del progetto
+Come identificatore per il risultato finale si e' scelto di utilizzare degli ```uuid``` versione 4 per evitare di incorrere in problemi derivati dall'utilizzo di identificatori incrementali, come nel dataset iniziale del progetto
 :::
 
 ## Considerazioni sui risultati
