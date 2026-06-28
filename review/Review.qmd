@@ -6,13 +6,11 @@ format:
     highlight-style: rose-pine-dawn.theme
     include-in-header: rose-pine-dawn.tex
     documentclass: scrartcl
-execute:
-    eval: false
 jupyter: python3
 ---
 
 # Analisi delle transazioni SatoshiDice
-La seguente relazione analizzera' i **dati di transazioni bitcoin** per ricavare informazioni sulle scommesse piazzate dagli utenti utilizzando il servizo di betting on-chain SatoshiDice.
+La seguente relazione analizzerà i **dati di transazioni bitcoin** per ricavare informazioni sulle scommesse piazzate dagli utenti utilizzando il servizo di betting on-chain SatoshiDice.
 
 # Prima parte: analisi dei dati forniti
 
@@ -38,7 +36,7 @@ Durante la fase di validazione dei dati (es. controllo dei valori nulli e del fo
 {{< include ../notes/invalid_transactions.py >}}
 ```
 
-In particolare 2 coppie di transazioni hanno lo stesso ```transaction_id```, ma hanno diverso ```timestamp``` e ```block_id```. Si ipotizza che siano due transazioni distinte a cui e' stato assegnato lo stesso id, ma per semplicita' vengono **escluse dalle analisi**.
+In particolare 2 coppie di transazioni hanno lo stesso ```transaction_id```, ma hanno diverso ```timestamp``` e ```block_id```. Si ipotizza che siano due transazioni distinte a cui é stato assegnato lo stesso id, ma per semplicità vengono **escluse dalle analisi**.
 
 ### Output invalidi
 
@@ -50,7 +48,7 @@ Anche in ```outputs``` abbiamo un problema simile ma per motivi diversi.
 
 Nel dataset sono presenti due coppie con identico ```transaction_id``` e ```output_position```. Questo significa che sono presenti nella stessa transazione due ```output_position``` identici, combinazione che **dovrebbe essere univoca da protocollo bitcoin**.
 
-In questo caso pero' le righe sono identiche sia per quanto riguarda ```output_address_id``` sia per ```amount``` quindi e' plausibile che siano semplicemente duplicate. Anche in questo caso verranno **escluse dall'analisi**.
+In questo caso però le righe sono identiche sia per quanto riguarda ```output_address_id``` sia per ```amount``` quindi é plausibile che siano semplicemente duplicate. Anche in questo caso verranno **escluse dall'analisi**.
 
 
 ### Schema delle transazioni
@@ -62,10 +60,10 @@ Per semplificare la modellazione dei dati, è stato applicato un merge preventiv
 ```
 
 ::: {.callout-tip}
-E' stata inserita anche una nuova colonna ```is_satoshi_bet``` che indica se la transazione e' una scommessa
+È stata inserita anche una nuova colonna ```is_satoshi_bet``` che indica se la transazione é una scommessa
 :::
 
-A questo punto il dataset e' nel formato corretto per l'analisi e si possono cominciare a estrarre informazioni.
+A questo punto il dataset é nel formato corretto per l'analisi e si possono cominciare a estrarre informazioni.
 
 # Analisi generali delle bet e dei payout
 
@@ -78,25 +76,25 @@ Si calcola la percentuale di **transazioni di bet rispetto al numero complessivo
 ```
 
 ::: {.callout-tip}
-La prima transazione verso il servizio SatoshiDice risale al 21 aprile 2012 mentre la prima transazione bitcoin risale al 3 gennaio 2009. Nel grafico viene mostrato solamente il periodo rilevante in cui e' presente almeno una scommessa.
+La prima transazione verso il servizio SatoshiDice risale al 21 aprile 2012 mentre la prima transazione bitcoin risale al 3 gennaio 2009. Nel grafico viene mostrato solamente il periodo rilevante in cui é presente almeno una scommessa.
 :::
 
-## Popolarita' di ogni indirizzo di betting
+## Popolarità di ogni indirizzo di betting
 
 ```{python}
 {{< include ../src/analysis1/dice_popularity.py >}}
 ```
 
-Due servizi hanno risultati particolari rispetto agli altri: ```less than 64000``` e ```less than 1```. Che hanno rispettivamente la probabilita' di vincita piu' alta e piu' bassa.
+Due servizi hanno risultati particolari rispetto agli altri: ```less than 64000``` e ```less than 1```. Che hanno rispettivamente la probabilità di vincita più alta e più bassa.
 
-Per ```less than 64000``` l'ammontare speso non e' proporzionale al numero di transazioni: gli utenti tendono a piazzare **meno scommesse**, ma di importo maggiore. Data l'**elevata probabilità di vincita**, gli utenti mostrano una forte avversione al rischio: tendono a piazzare puntate più alte quando la probabilità di vincita è elevata, percependo l'investimento come più 'sicuro' (sebbene il valore atteso rimanga negativo).
+Per ```less than 64000``` l'ammontare speso non é proporzionale al numero di transazioni: gli utenti tendono a piazzare **meno scommesse**, ma di importo maggiore. Data l'**elevata probabilità di vincita**, gli utenti mostrano una forte avversione al rischio: tendono a piazzare puntate più alte quando la probabilità di vincita è elevata, percependo l'investimento come più 'sicuro' (sebbene il valore atteso rimanga negativo).
 
-Per ```less than 1``` si nota l'opposto, ovvero le persone tendono a fare **piu' bet** ma piccole. Al contrario, l'**alta probabilità di sconfitta** scoraggia puntate elevate; tuttavia, l'alta frequenza di queste piccole transazioni rende l'indirizzo più popolare in termini di ammontare assoluto.
+Per ```less than 1``` si nota l'opposto, ovvero le persone tendono a fare **più bet** ma piccole. Al contrario, l'**alta probabilità di sconfitta** scoraggia puntate elevate; tuttavia, l'alta frequenza di queste piccole transazioni rende l'indirizzo più popolare in termini di ammontare assoluto.
 
-E' interessante il fatto che in termini di soldi spesi per le scommesse ```less than 64000``` sia piu' di 37 volte maggiore di ```less than 1``` nonostante il valore atteso di ```less than 1``` sia migliore.
+È interessante il fatto che in termini di soldi spesi per le scommesse ```less than 64000``` sia più di 37 volte maggiore di ```less than 1``` nonostante il valore atteso di ```less than 1``` sia migliore.
 
 ::: {.callout-tip}
-Il risultato dell'ordinamento degli indirizzi e' stato salvato in un file ```.csv``` perche' sara' necessario successivamente
+Il risultato dell'ordinamento degli indirizzi é stato salvato in un file ```.csv``` perché sarà necessario successivamente
 :::
 
 ## Distanza tra scommessa e payout
@@ -109,9 +107,9 @@ Il risultato dell'ordinamento degli indirizzi e' stato salvato in un file ```.cs
 Il 24% delle transazioni ha 0 blocchi di distanza
 :::
 
-## Analisi sugli indirizzi di SatoshiDice piu' popolari
+## Analisi sugli indirizzi di SatoshiDice più popolari
 
-I tre indirizzi piu' popolari sono i seguenti
+I tre indirizzi più popolari sono i seguenti
 
 ```{python}
 {{< include ../notes/popular_address_names.py >}}
@@ -131,12 +129,12 @@ Indicati nei grafici come 1, 2 e 3
 {{< include ../src/analysis1/bet_fee_correlation.py >}}
 ```
 
-Dato che i **valori di correlazione** sono **prossimi allo 0** possiamo dedurne che non e' presente una correlazione lineare. E' possibile che sia presente una correlazione di forma non lineare, tra i vari test di correlazione eseguiti non e' stata riscontrata nessun altra correlazione (es. inversa o di rango).
+Dato che i **valori di correlazione** sono **prossimi allo 0** possiamo dedurne che non é presente una correlazione lineare. È possibile che sia presente una correlazione di forma non lineare, tra i vari test di correlazione eseguiti non é stata riscontrata nessun altra correlazione (es. inversa o di rango).
 
 Sebbene non si possa escludere in assoluto l'esistenza di una complessa correlazione non lineare, è altamente improbabile che un legame tra commissione e ammontare della transazione abbia questa forma.
 
 
-Sono presenti alcune **linee verticali e orizzontali** su cui si concentrano i punti, questi sono valori "interi" in cui tendono ad aggirarsi sia le quantita' scommesse che i valori delle commissioni
+Sono presenti alcune **linee verticali e orizzontali** su cui si concentrano i punti, questi sono valori "interi" in cui tendono ad aggirarsi sia le quantità scommesse che i valori delle commissioni
 
 ### Intervalli tra bet consecutive
 
@@ -148,7 +146,7 @@ Sono presenti alcune **linee verticali e orizzontali** su cui si concentrano i p
 
 ## Descrizione del dominio del problema
 
-Una catena di bet e' definita come una sequenza di transazioni in cui gli output di una sono l'input di un'altra, stabilendo quindi un legame diretto e tracciabile tra le transazioni.
+Una catena di bet é definita come una sequenza di transazioni in cui gli output di una sono l'input di un'altra, stabilendo quindi un legame diretto e tracciabile tra le transazioni.
 
 
 Per ottenere delle catene lineari e facilmente interpretabili ci si limita ad analizzare le **simple bet**.
@@ -169,10 +167,10 @@ Due simple bet appartengono alla stessa catena se l'**input della seconda** coin
 ```
 
 ::: {.callout-tip}
-La maggior parte del codice che gestisce le computazioni e' nel file ```bet_chains_functions```, lo snippet di codice qui sopra esprime in maniera chiara la pipeline di operazioni effettuate per trovare il risultato
+La maggior parte del codice che gestisce le computazioni é nel file ```bet_chains_functions```, lo snippet di codice qui sopra esprime in maniera chiara la pipeline di operazioni effettuate per trovare il risultato
 :::
 
-E' bene notare che il grafo ha una forma particolare. Per via del modo in cui e' definita una catena di simple bet ha effettivamente solamente un input e un output rilevanti (dato che l'output verso satoshi dice non e' utile per definire la forma dei cammini). Per cui **il grafico e' un insieme di cammini lineari** e la libreria ```networkx``` fornisce una funzione per trovare le componenti debolmente connesse, che nel nostro caso calcola i cammini lineari.
+È bene notare che il grafo ha una forma particolare. Per via del modo in cui é definita una catena di simple bet ha effettivamente solamente un input e un output rilevanti (dato che l'output verso satoshi dice non é utile per definire la forma dei cammini). Per cui **il grafico é un insieme di cammini lineari** e la libreria ```networkx``` fornisce una funzione per trovare le componenti debolmente connesse, che nel nostro caso calcola i cammini lineari.
 
 ::: {.callout-tip}
 Dal punto di vista topologico, il grafo risultante si configura come un insieme di percorsi lineari disgiunti (assimilabili a linked list).
@@ -182,25 +180,25 @@ Dal punto di vista topologico, il grafo risultante si configura come un insieme 
 
 ## Calcolo dei risultati
 
-Nella sezione precedente sono stati trovati i nodi che appartengono ai cammini lineari, ora verra' realizzata **un'operazione di de-anonimizzazione** (per quanto possibile) appoggiandosi al servizio ```Wallet Explorer``` per verificare se le intere catene di transazioni sono riconducibili a un singolo portafoglio.
+Nella sezione precedente sono stati trovati i nodi che appartengono ai cammini lineari, ora verrà realizzata **un'operazione di de-anonimizzazione** (per quanto possibile) appoggiandosi al servizio ```Wallet Explorer``` per verificare se le intere catene di transazioni sono riconducibili a un singolo portafoglio.
 
 ```{python}
 {{< include ../src/analysis3/deanonymization.py >}}
 ```
 
 ::: {.callout-warning}
-Le informazioni per associare gli indirizzi ai portafogli sono estratte dal sito ```WalletExplorer.com``` tramite web scraping in quanto requisito del progetto, il sito in realta' fornisce un'API pubblica che permette di fare richieste di informazioni sugli indirizzi in batch
+Le informazioni per associare gli indirizzi ai portafogli sono estratte dal sito ```WalletExplorer.com``` tramite web scraping in quanto requisito del progetto, il sito in realtà fornisce un'API pubblica che permette di fare richieste di informazioni sugli indirizzi in batch
 :::
 
 Il codice utilizza la libreria ```Selenium``` per aprire un'istanza di un browser che apre il sito e trova il nome del portafoglio associato tramite selezione per nome di classe.
 
 
-I risultati vengono poi salvati in un file di cache cosi' che le successive chiamate possano riutilizzarli.
+I risultati vengono poi salvati in un file di cache così che le successive chiamate possano riutilizzarli.
 
 ::: {.callout-tip}
-Come identificatore per il risultato finale si e' scelto di utilizzare degli ```uuid``` versione 4 per evitare di incorrere in problemi derivati dall'utilizzo di identificatori incrementali, come nel dataset iniziale del progetto
+Come identificatore per il risultato finale si é scelto di utilizzare degli ```uuid``` versione 4 per evitare di incorrere in problemi derivati dall'utilizzo di identificatori incrementali, come nel dataset iniziale del progetto
 :::
 
 ## Considerazioni sui risultati
 
-La maggior parte delle lunghe catene appartiene a un singolo wallet (nel caso della seconda piu' lunga, tutta la catena). Questo conferma che le catene sono composte perlopiu' da un unico utente che continua a scommettere i propri coin.
+La maggior parte delle lunghe catene appartiene a un singolo wallet (nel caso della seconda più lunga, tutta la catena). Questo conferma che le catene sono composte perlopiù da un unico utente che continua a scommettere i propri coin.
